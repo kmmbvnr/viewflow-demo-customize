@@ -1,0 +1,3 @@
+https://github.com/django/django/archive/1.7b1.zip
+git+https://github.com/kmmbvnr/django-viewflow.git
+
