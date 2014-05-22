@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, url
 from django.contrib.auth import login, logout
 from django.contrib.auth.models import User
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 
 
 def users(request):
@@ -21,11 +21,11 @@ def login_as(request):
     if user:
         user.backend = 'django.contrib.auth.backends.ModelBackend'
         login(request, user)
+        return redirect('/')
     else:
         logout(request)
-
-    return redirect(request.META.get('HTTP_REFERER', '/'))
+        return render(request, 'login.html')
 
 
 urlpatterns = patterns('',  # NOQA
-    url(r'^login_as/$', login_as, name="login_as"))
+    url(r'^accounts/login/$', login_as, name="login"))

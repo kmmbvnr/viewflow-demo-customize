@@ -1,19 +1,41 @@
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 
 
+@login_required
 def index(request):
     """
     Home view
     """
     from .flows import ContractApprovalFlow
-
     has_start_permission = ContractApprovalFlow.start.has_perm(request.user)
 
+    task_data = {
+        'assigned': ContractApprovalFlow.task_cls.objects.filter(
+            owner=request.user,
+            status='NEW'),
+        'unassigned': ContractApprovalFlow.task_cls.objects.filter(
+            flow_task_type='VIEW',
+            owner__isnull=True,
+            status='NEW'),
+        'equipment_wait': ContractApprovalFlow.task_cls.objects.filter(
+            flow_task=ContractApprovalFlow.equipment_received,
+            status='NEW')
+    }
+
+    # Task List
+    active_filter = request.GET.get('filter', 'assigned')
+    task_list = ContractApprovalFlow.task_cls.objects.none()
+    if active_filter in task_data:
+        task_list = task_data[active_filter]
+
     return render(request, 'index.html',
-                  {'has_start_permission': has_start_permission})
+                  {'task_data': task_data,
+                   'task_list': task_list,
+                   'has_start_permission': has_start_permission})
 
 
-def upload_contract(request, activation):
+def upload_contract(request, flow_task):
     pass
 
 

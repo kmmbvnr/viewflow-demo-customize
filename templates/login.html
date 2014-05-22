@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block nav %}
+<div class="container navbar-fixed-top">
+    <div class="jumbotron">
+        <div class="row">
+            <h2>Sales Contract Approval Workflow</h2>
+        </div>
+    </div>
+
+    <div class="row text-center">
+        <a href="{% static 'workflow.png' %}" target="_blank">
+            <img style="width:600px" src="{% static 'workflow.png' %}">
+        </a>
+    </div>
+    <br/>
+    <div class="row text-center">
+        <div class="btn-group">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                Login
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu text-left">
+                {% for user in users %}
+                <li><a href="{% url 'login' %}?user_pk={{ user.pk }}">{{ user.username|title }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block container %}{% endblock %}
