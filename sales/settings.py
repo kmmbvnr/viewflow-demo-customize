@@ -56,3 +56,15 @@ USE_TZ = True
 
 # Static files
 STATIC_URL = '/static/'
+
+
+# Template settings
+from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS
+TEMPLATE_CONTEXT_PROCESSORS = TEMPLATE_CONTEXT_PROCESSORS + (
+    'django.core.context_processors.request',
+    'sales.website.users',
+)
+
+TEMPLATE_DIRS = (
+    os.path.join(BASE_DIR, 'sales/templates/'),
+)
