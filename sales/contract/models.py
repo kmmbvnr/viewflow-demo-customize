@@ -65,4 +65,4 @@ class ContractSubmission(models.Model):
 
 
 class ApprovalProcess(Process):
-    process = models.ForeignKey(Contract)
+    contract = models.ForeignKey(Contract)

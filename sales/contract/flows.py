@@ -9,24 +9,24 @@ class ContractApprovalFlow(Flow):
     lock_impl = lock.select_for_update_lock
 
     # Sales manager
-    start = flow.Start(views.upload_contract) \
+    start = flow.Start(views.AddContractView) \
         .Permission(auto_create=True) \
         .Activate(this.split_approval)
+
+    upload_contract = flow.View(views.AddContractView) \
+        .Assign(this.start.owner) \
+        .Next(this.split_approval)
 
     split_approval = flow.Split() \
         .Next(this.cfo_approval) \
         .Next(this.coo_approval)
 
     sign_contract = flow.View(views.sign_contract) \
-        .Permission(this.start.owner) \
+        .Assign(this.start.owner) \
         .Next(this.upload_contract)
 
-    upload_contract = flow.View(views.upload_contract) \
-        .Permission(this.start.owner) \
-        .Next(this.accounting_confirm)
-
     collect_pdc = flow.View(views.collect_pdc) \
-        .Permission(this.start.owner) \
+        .Assign(this.start.owner) \
         .Next(this.scan_pdc)
 
     # Chief Financial Officer
@@ -81,7 +81,7 @@ class ContractApprovalFlow(Flow):
         .OnFalse(this.issue_lpo)
 
     allocate = flow.View(views.allocate) \
-        .Permission(this.check_availability.owner) \
+        .Assign(this.check_availability.owner) \
         .Next(this.issue_invoice)
 
     issue_invoice = flow.View(views.issue_invoice) \
@@ -98,7 +98,7 @@ class ContractApprovalFlow(Flow):
         .Next(this.upload_documents)
 
     upload_documents = flow.View(views.upload_documents) \
-        .Permission(this.equipment_received.owner) \
+        .Assign(this.equipment_received.owner) \
         .Next(this.post_rgr)
 
     deliver_equipment = flow.View(views.deliver_equipment) \
@@ -106,7 +106,7 @@ class ContractApprovalFlow(Flow):
         .Next(this.scan_delivery_note)
 
     scan_delivery_note = flow.View(views.scan_delivery_note) \
-        .Permission(this.deliver_equipment.owner) \
+        .Assign(this.deliver_equipment.owner) \
         .Next(this.post_sales_invoice)
 
     # End

@@ -1,5 +1,11 @@
-from django.shortcuts import render
+from django import forms
+from django.views.generic import CreateView
+from django.forms.models import modelform_factory
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from viewflow.flow.start import StartViewMixin
+
+from .models import Contract, ContractScan, ContractSubmission
 
 
 @login_required
@@ -35,9 +41,63 @@ def index(request):
                    'has_start_permission': has_start_permission})
 
 
-def upload_contract(request, flow_task):
-    pass
+class AddContractView(StartViewMixin, CreateView):
+    model = Contract
+    fields = ['client_name', 'contract_number']
 
+    def form_valid(self, form):
+        self.object = form.save()
+        self.activation.process.contract = self.object
+        self.activation.done()
+        return redirect('viewflow:upload_contract')
+
+"""
+@flow_start_view()
+def upload_contract(request, activation):
+    class ContractForm(modelform_factory(Contract, fields=('client_name', 'contract_number'))):
+        contract_draft = forms.FileField()
+        quotation_draft = forms.FileField()
+
+    activation.prepare(request.POST or None)
+    contract = activation.process.contract if activation.process.contract_id else None
+
+    if request.method == 'POST':
+        contract_form = ContractForm(request.POST, request.FILES, instance=contract)
+
+        if contract_form.is_valid():
+            # Save contract
+            contract = contract_form.save()
+
+            # Save contact submittion
+            contract_draft = ContractScan.objects.create(
+                contract=contract,
+                scan_type=ContractScan.TYPE.CONTRACT_DRAFT,
+                scan=contract_form.cleaned_data['contract_draft'])
+
+            quotation_draft = ContractScan.objects.create(
+                contract=contract,
+                scan_type=ContractScan.TYPE.CONTRACT_DRAFT,
+                scan=contract_form.cleaned_data['quotation_draft'])
+
+            ContractSubmission.objects.create(
+                contract=contract,
+                contract_draft=contract_draft,
+                quotation_draft=quotation_draft)
+
+            # Start process
+            activation.process.contract = contract
+            activation.done()
+
+            return redirect('/')
+    else:
+        contract_form = ContractForm()
+
+    return render(request, 'upload_contract.html', {
+        'activation': activation,
+        'contract_form': contract_form
+    })
+
+"""
 
 def sign_contract(request, activation):
     pass

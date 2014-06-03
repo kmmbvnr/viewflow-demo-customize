@@ -70,3 +70,8 @@ TEMPLATE_CONTEXT_PROCESSORS = TEMPLATE_CONTEXT_PROCESSORS + (
 TEMPLATE_DIRS = (
     os.path.join(BASE_DIR, 'templates'),
 )
+
+
+# Cryspy forms
+INSTALLED_APPS += ('crispy_forms', )
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
