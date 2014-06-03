@@ -14,10 +14,9 @@ class Contract(models.Model):
                       (STATUS.CONFIRMED, 'Confirmed'))
 
     status = FSMField(default=STATUS.DRAFT, choices=STATUS_CHOICES)
-    process = models.ForeignKey('ContractApprovalProcess')
 
-    cfo_remarks = models.TextField(blank=True, null=True)
-    coo_remarks = models.TextField(blank=True, null=True)
+    client_name = models.CharField(max_length=250)
+    contract_number = models.CharField(max_length=50)
 
     @transition(field=status, source=STATUS.DRAFT, target=STATUS.SIGNED,
                 conditions=[lambda contract: contract.process.approved_contract_id is None])
@@ -35,7 +34,7 @@ class Contract(models.Model):
         """
 
 
-class ContactScan(models.Model):
+class ContractScan(models.Model):
     class TYPE:
         CONTRACT_DRAFT = 'CONTRACT_DRAFT'
         QUOTATION_DRAFT = 'QUOTATION_DRAFT'
@@ -54,7 +53,16 @@ class ContactScan(models.Model):
     scan = models.FileField(upload_to='contracts/')
 
 
-class ContractApprovalProcess(Process):
-    client_name = models.CharField(max_length=250)
-    contract_number = models.CharField(max_length=50)
-    approved_contract = models.ForeignKey(Contract, null=True, blank=True)
+class ContractSubmission(models.Model):
+    contract = models.ForeignKey(Contract)
+    submitted = models.DateTimeField(auto_now_add=True)
+
+    contract_draft = models.ForeignKey(ContractScan, related_name='+')
+    quotation_draft = models.ForeignKey(ContractScan, related_name='+')
+
+    cfo_remarks = models.TextField(blank=True, null=True)
+    coo_remarks = models.TextField(blank=True, null=True)
+
+
+class ApprovalProcess(Process):
+    process = models.ForeignKey(Contract)

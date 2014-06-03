@@ -1,0 +1,110 @@
+[
+{
+    "model": "auth.group",
+    "fields": {
+        "permissions": [
+            [
+                "can_start_approvalprocess",
+                "contract",
+                "approvalprocess"
+            ]
+        ],
+        "name": "Sales Manager"
+    }
+},
+{
+    "model": "auth.group",
+    "fields": {
+        "permissions": [
+            [
+                "can_cfo_approval_approvalprocess",
+                "contract",
+                "approvalprocess"
+            ]
+        ],
+        "name": "Chief Financial Officer"
+    }
+},
+{
+    "model": "auth.group",
+    "fields": {
+        "permissions": [
+            [
+                "can_coo_approval_approvalprocess",
+                "contract",
+                "approvalprocess"
+            ]
+        ],
+        "name": "Chief Operating Officer"
+    }
+},
+{
+    "model": "auth.group",
+    "fields": {
+        "permissions": [
+            [
+                "can_accounting_confirm_approvalprocess",
+                "contract",
+                "approvalprocess"
+            ],
+            [
+                "can_confirm_remaining_payment_approvalprocess",
+                "contract",
+                "approvalprocess"
+            ],
+            [
+                "can_post_rgr_approvalprocess",
+                "contract",
+                "approvalprocess"
+            ],
+            [
+                "can_post_sales_invoice_approvalprocess",
+                "contract",
+                "approvalprocess"
+            ],
+            [
+                "can_scan_pdc_approvalprocess",
+                "contract",
+                "approvalprocess"
+            ]
+        ],
+        "name": "Accounting"
+    }
+},
+{
+    "model": "auth.group",
+    "fields": {
+        "permissions": [
+            [
+                "can_check_availability_approvalprocess",
+                "contract",
+                "approvalprocess"
+            ]
+        ],
+        "name": "Sales Coordinator"
+    }
+},
+{
+    "model": "auth.group",
+    "fields": {
+        "permissions": [
+            [
+                "can_deliver_equipment_approvalprocess",
+                "contract",
+                "approvalprocess"
+            ],
+            [
+                "can_issue_lpo_approvalprocess",
+                "contract",
+                "approvalprocess"
+            ],
+            [
+                "can_notify_equipment_received",
+                "contract",
+                "approvalprocess"
+            ]
+        ],
+        "name": "Logistics"
+    }
+}
+]

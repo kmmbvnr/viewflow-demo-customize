@@ -25,10 +25,10 @@
                 <li><a class="navbar-brand" href="/">Sales Contract Approval</a></li>
                 <ul class="nav navbar-nav navbar-right">
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ request.user.username|title|default:"Login" }} <b class="caret"></b></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ request.user|default:"Login" }} <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                             {% for user in users %}
-                            <li><a href="{% url 'login' %}?user_pk={{ user.pk }}"><i class="glyphicon {% if request.user == user %}glyphicon-ok{% endif %}"></i> {{ user.username|title }}</a></li>
+                            <li><a href="{% url 'login' %}?user_pk={{ user.pk }}"><i class="glyphicon {% if request.user == user %}glyphicon-ok{% endif %}"></i> {{ user }}</a></li>
                             {% endfor %}
                             {% if request.user.is_authenticated %}
                             <li class="divider"></li>

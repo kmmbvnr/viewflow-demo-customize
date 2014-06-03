@@ -23,7 +23,7 @@
             </button>
             <ul class="dropdown-menu text-left">
                 {% for user in users %}
-                <li><a href="{% url 'login' %}?user_pk={{ user.pk }}">{{ user.username|title }}</a></li>
+                <li><a href="{% url 'login' %}?user_pk={{ user.pk }}">{{ user }}</a></li>
                 {% endfor %}
             </ul>
         </div>
