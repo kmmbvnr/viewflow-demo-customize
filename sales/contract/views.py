@@ -1,9 +1,9 @@
 from django import forms
-from django.views.generic import CreateView
-from django.forms.models import modelform_factory
-from django.shortcuts import render, redirect
+from django.views.generic import CreateView, UpdateView, FormView
+from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from viewflow.flow.start import StartViewMixin
+from viewflow.flow.view import TaskViewMixin
 
 from .models import Contract, ContractScan, ContractSubmission
 
@@ -45,59 +45,39 @@ class AddContractView(StartViewMixin, CreateView):
     model = Contract
     fields = ['client_name', 'contract_number']
 
-    def form_valid(self, form):
+    def activation_done(self, form):
         self.object = form.save()
         self.activation.process.contract = self.object
         self.activation.done()
-        return redirect('viewflow:upload_contract')
 
-"""
-@flow_start_view()
-def upload_contract(request, activation):
-    class ContractForm(modelform_factory(Contract, fields=('client_name', 'contract_number'))):
-        contract_draft = forms.FileField()
-        quotation_draft = forms.FileField()
 
-    activation.prepare(request.POST or None)
-    contract = activation.process.contract if activation.process.contract_id else None
+class UploadContractView(TaskViewMixin, FormView):
+    def get_form_class(self):
+        class UploadContractForm(forms.Form):
+            contract_draft = forms.FileField()
+            quotation_draft = forms.FileField()
 
-    if request.method == 'POST':
-        contract_form = ContractForm(request.POST, request.FILES, instance=contract)
+        return UploadContractForm
 
-        if contract_form.is_valid():
-            # Save contract
-            contract = contract_form.save()
+    def activation_done(self, form):
+        # Save contact submittion
+        contract_draft = ContractScan.objects.create(
+            contract=self.activation.process.contract,
+            scan_type=ContractScan.TYPE.CONTRACT_DRAFT,
+            scan=form.cleaned_data['contract_draft'])
 
-            # Save contact submittion
-            contract_draft = ContractScan.objects.create(
-                contract=contract,
-                scan_type=ContractScan.TYPE.CONTRACT_DRAFT,
-                scan=contract_form.cleaned_data['contract_draft'])
+        quotation_draft = ContractScan.objects.create(
+            contract=self.activation.process.contract,
+            scan_type=ContractScan.TYPE.CONTRACT_DRAFT,
+            scan=form.cleaned_data['quotation_draft'])
 
-            quotation_draft = ContractScan.objects.create(
-                contract=contract,
-                scan_type=ContractScan.TYPE.CONTRACT_DRAFT,
-                scan=contract_form.cleaned_data['quotation_draft'])
+        ContractSubmission.objects.create(
+            contract=self.activation.process.contract,
+            contract_draft=contract_draft,
+            quotation_draft=quotation_draft)
 
-            ContractSubmission.objects.create(
-                contract=contract,
-                contract_draft=contract_draft,
-                quotation_draft=quotation_draft)
+        self.activation.done()
 
-            # Start process
-            activation.process.contract = contract
-            activation.done()
-
-            return redirect('/')
-    else:
-        contract_form = ContractForm()
-
-    return render(request, 'upload_contract.html', {
-        'activation': activation,
-        'contract_form': contract_form
-    })
-
-"""
 
 def sign_contract(request, activation):
     pass
@@ -107,8 +87,18 @@ def collect_pdc(request, activation):
     pass
 
 
-def cfo_approval(request, activation):
-    pass
+class CFOApprovalView(TaskViewMixin, UpdateView):
+    fields = ['cfo_remarks', 'cfo_approved']
+
+    def get_object(self, queryset=None):
+        return self.activation.process.contract.contractsubmission_set.latest()
+
+
+class COOApprovalView(TaskViewMixin, UpdateView):
+    fields = ['coo_remarks', 'coo_approved']
+
+    def get_object(self, queryset=None):
+        return self.activation.process.contract.contractsubmission_set.latest()
 
 
 def coo_approval(request, activation):

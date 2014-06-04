@@ -11,9 +11,9 @@ class ContractApprovalFlow(Flow):
     # Sales manager
     start = flow.Start(views.AddContractView) \
         .Permission(auto_create=True) \
-        .Activate(this.split_approval)
+        .Activate(this.upload_contract)
 
-    upload_contract = flow.View(views.AddContractView) \
+    upload_contract = flow.View(views.UploadContractView) \
         .Assign(this.start.owner) \
         .Next(this.split_approval)
 
@@ -23,27 +23,31 @@ class ContractApprovalFlow(Flow):
 
     sign_contract = flow.View(views.sign_contract) \
         .Assign(this.start.owner) \
-        .Next(this.upload_contract)
+        .Next(this.upload_contract_checks)
+
+    upload_contract_checks = flow.View(views.sign_contract) \
+        .Assign(this.start.owner) \
+        .Next(this.accounting_confirm)
 
     collect_pdc = flow.View(views.collect_pdc) \
         .Assign(this.start.owner) \
         .Next(this.scan_pdc)
 
     # Chief Financial Officer
-    cfo_approval = flow.View(views.cfo_approval) \
+    cfo_approval = flow.View(views.CFOApprovalView) \
         .Permission(auto_create=True) \
         .Next(this.check_cfo_remarks)
 
-    check_cfo_remarks = flow.If(lambda p: p.cfo_remarks.exists()) \
+    check_cfo_remarks = flow.If(lambda p: p.cfo_approved()) \
         .OnTrue(this.join_approved) \
         .OnFalse(this.end_rejected)
 
     # Chief Operating Officer
-    coo_approval = flow.View(views.coo_approval) \
+    coo_approval = flow.View(views.COOApprovalView) \
         .Permission(auto_create=True) \
         .Next(this.check_coo_remarks)
 
-    check_coo_remarks = flow.If(lambda p: p.coo_remarks.exists()) \
+    check_coo_remarks = flow.If(lambda p: p.coo_approved()) \
         .OnTrue(this.join_approved) \
         .OnFalse(this.end_rejected)
 

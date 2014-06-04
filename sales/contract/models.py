@@ -48,7 +48,7 @@ class ContractScan(models.Model):
                     (TYPE.CHECK, 'Check'),
                     (TYPE.POST_DATED_CHECH, 'Check'))
 
-    contact = models.ForeignKey(Contract)
+    contract = models.ForeignKey(Contract)
     scan_type = models.CharField(max_length=50, choices=TYPE_CHOICES)
     scan = models.FileField(upload_to='contracts/')
 
@@ -60,9 +60,21 @@ class ContractSubmission(models.Model):
     contract_draft = models.ForeignKey(ContractScan, related_name='+')
     quotation_draft = models.ForeignKey(ContractScan, related_name='+')
 
+    cfo_approved = models.NullBooleanField()
     cfo_remarks = models.TextField(blank=True, null=True)
+
+    coo_approved = models.NullBooleanField()
     coo_remarks = models.TextField(blank=True, null=True)
+
+    class Meta:
+        get_latest_by = 'submitted'
 
 
 class ApprovalProcess(Process):
     contract = models.ForeignKey(Contract)
+
+    def coo_approved(self):
+        return self.contract.contractsubmission_set.latest().coo_approved
+
+    def cfo_approved(self):
+        return self.contract.contractsubmission_set.latest().cfo_approved
