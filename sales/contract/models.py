@@ -18,14 +18,11 @@ class Contract(models.Model):
     client_name = models.CharField(max_length=250)
     contract_number = models.CharField(max_length=50)
 
-    @transition(field=status, source=STATUS.DRAFT, target=STATUS.SIGNED,
-                conditions=[lambda contract: contract.process.approved_contract_id is None])
+    @transition(field=status, source=STATUS.DRAFT, target=STATUS.SIGNED)
     def sign(self):
         """
         Contract signed with customer
         """
-        self.process.approved_contract = self
-        self.process.save()
 
     @transition(field=status, source=STATUS.SIGNED, target=STATUS.CONFIRMED)
     def confirm(self):
@@ -40,13 +37,13 @@ class ContractScan(models.Model):
         QUOTATION_DRAFT = 'QUOTATION_DRAFT'
         CONTRACT_SIGNED = 'CONTRACT_SIGNED'
         CHECK = 'CHECK'
-        POST_DATED_CHECH = 'PDC'
+        POST_DATE_CHECK = 'PDC'
 
     TYPE_CHOICES = ((TYPE.CONTRACT_DRAFT, 'Contract draft'),
                     (TYPE.QUOTATION_DRAFT, 'Quotation draft'),
                     (TYPE.CONTRACT_SIGNED, 'Signed contract'),
                     (TYPE.CHECK, 'Check'),
-                    (TYPE.POST_DATED_CHECH, 'Check'))
+                    (TYPE.POST_DATE_CHECK, 'Check'))
 
     contract = models.ForeignKey(Contract)
     scan_type = models.CharField(max_length=50, choices=TYPE_CHOICES)

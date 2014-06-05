@@ -1,7 +1,12 @@
 from django import forms
 from django.views.generic import CreateView, UpdateView, FormView
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+
+from extra_views import ModelFormSetView
+
+from viewflow.views import ProcessView
 from viewflow.flow.start import StartViewMixin
 from viewflow.flow.view import TaskViewMixin
 
@@ -79,12 +84,45 @@ class UploadContractView(TaskViewMixin, FormView):
         self.activation.done()
 
 
-def sign_contract(request, activation):
-    pass
+class UploadSignedContractView(TaskViewMixin, FormView):
+    def get_form_class(self):
+        class UploadContractForm(forms.Form):
+            contract = forms.FileField()
+        return UploadContractForm
+
+    def activation_done(self, form):
+        # Save contact submittion
+        contract = self.activation.process.contract
+
+        ContractScan.objects.create(
+            contract=contract,
+            scan_type=ContractScan.TYPE.CONTRACT_SIGNED,
+            scan=form.cleaned_data['contract'])
+        contract.sign()
+        contract.save()
+        self.activation.done()
 
 
-def collect_pdc(request, activation):
-    pass
+class UploadContractChecks(TaskViewMixin, ModelFormSetView):
+    model = ContractScan
+    extra = 4
+    fields = ["scan"]
+
+    def get_queryset(self):
+        return ContractScan.objects.filter(
+            contract=self.activation.process.contract,
+            scan_type=ContractScan.TYPE.CHECK)
+
+    def formset_valid(self, formset):
+        scans = formset.save(commit=False)
+        for scan in scans:
+            scan.contract = self.activation.process.contract
+            scan.scan_type = ContractScan.TYPE.CHECK
+            scan.save()
+
+        self.activation.done()
+
+        return HttpResponseRedirect(self.get_success_url())
 
 
 class CFOApprovalView(TaskViewMixin, UpdateView):
@@ -101,12 +139,14 @@ class COOApprovalView(TaskViewMixin, UpdateView):
         return self.activation.process.contract.contractsubmission_set.latest()
 
 
-def coo_approval(request, activation):
-    pass
-
-
-def accounting_confirm(request, activation):
-    pass
+class AccountingConfirmView(ProcessView):
+    def activation_done(self, form):
+        """
+        Finish activation. Subclasses could override this
+        """
+        self.process.contract.confirm()
+        self.process.contract.save()
+        self.done()
 
 
 def post_rgr(request, activation):

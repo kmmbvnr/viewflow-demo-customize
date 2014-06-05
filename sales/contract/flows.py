@@ -21,15 +21,15 @@ class ContractApprovalFlow(Flow):
         .Next(this.cfo_approval) \
         .Next(this.coo_approval)
 
-    sign_contract = flow.View(views.sign_contract) \
+    sign_contract = flow.View(views.UploadSignedContractView) \
         .Assign(this.start.owner) \
         .Next(this.upload_contract_checks)
 
-    upload_contract_checks = flow.View(views.sign_contract) \
+    upload_contract_checks = flow.View(views.UploadContractChecks) \
         .Assign(this.start.owner) \
         .Next(this.accounting_confirm)
 
-    collect_pdc = flow.View(views.collect_pdc) \
+    collect_pdc = flow.View(views.post_rgr) \
         .Assign(this.start.owner) \
         .Next(this.scan_pdc)
 
@@ -55,7 +55,7 @@ class ContractApprovalFlow(Flow):
         .Next(this.sign_contract)
 
     # Accounting
-    accounting_confirm = flow.View(views.accounting_confirm) \
+    accounting_confirm = flow.View(views.AccountingConfirmView) \
         .Permission(auto_create=True) \
         .Next(this.check_availability)
 
