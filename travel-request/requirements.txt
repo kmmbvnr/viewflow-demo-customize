@@ -1,0 +1,4 @@
+https://github.com/django/django/archive/1.7b4.zip
+git+https://github.com/kmmbvnr/django-viewflow.git
+django-crispy-forms==1.4.0
+django-extra-views==0.6.4
