@@ -1,0 +1,6 @@
+django==1.6.5
+cartridge
+south
+grappelli_safe
+filebrowser_safe
+git+ssh://git@github.com/kmmbvnr/django-viewflow-pro.git
