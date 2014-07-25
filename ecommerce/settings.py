@@ -99,6 +99,15 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'deploy/static')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'deploy/media')
+
+# Our ecommerce app
+INSTALLED_APPS += (
+    "ecommerce.moderna",
+)
 
 
 # Mezzazine and cartride
