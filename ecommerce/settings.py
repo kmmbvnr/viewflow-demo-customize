@@ -45,6 +45,10 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.tz",
 )
 
+TEMPLATE_DIRS = (
+    os.path.join(BASE_DIR, 'templates'),
+)
+
 STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",

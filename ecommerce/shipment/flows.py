@@ -62,6 +62,9 @@ class ShipmentFlow(Flow):
 
     move_package = flow.View(ProcessView.as_view()) \
         .Assign(this.package_goods.owner) \
+        .Next(this.mark_order_done)
+
+    mark_order_done = flow.Handler(tasks.done_order) \
         .Next(this.end)
 
     end = flow.End()

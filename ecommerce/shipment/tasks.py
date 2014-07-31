@@ -9,3 +9,11 @@ def start_shipment_process(activation, order):
 
     activation.process.shipment = shipment
     activation.done()
+
+
+def done_order(activation):
+    order = activation.process.shipment.order
+    order.status = 2  # DONE
+    order.save()
+
+    activation.done()
