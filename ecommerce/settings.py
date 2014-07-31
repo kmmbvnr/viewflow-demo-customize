@@ -21,6 +21,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'django.contrib.redirects',
     'south',
 )
 
@@ -104,11 +105,15 @@ MEDIA_URL = '/media/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'deploy/static')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'deploy/media')
 
-# Our ecommerce app
+# Ecommerce app
+SHOP_HANDLER_ORDER = 'ecommerce.shipment.handlers.cartridge_order_handler'
+
 INSTALLED_APPS += (
+    'viewflow',
+    'viewflow.site',
+    'ecommerce.shipment',
     "ecommerce.moderna",
 )
-
 
 # Mezzazine and cartride
 SITE_ID = 1
@@ -134,6 +139,10 @@ TEMPLATE_CONTEXT_PROCESSORS += (
     "mezzanine.pages.context_processors.page",
 )
 
+SHOP_CARD_TYPES = ('Demo', )
+
+
+# Dynamic settings
 try:
     from mezzanine.utils.conf import set_dynamic_settings
 except ImportError:
