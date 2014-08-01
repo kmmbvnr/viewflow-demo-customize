@@ -55,6 +55,12 @@ STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.DefaultStorageFinder",
 )
 
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'deploy/static')
+
 # List of middleware classes to use. Order is important; in the request phase,
 # these middleware classes will be applied in the order given, and in the
 # response phase the middleware will be applied in reverse order.
@@ -118,6 +124,8 @@ INSTALLED_APPS += (
     'ecommerce.shipment',
     "ecommerce.moderna",
 )
+
+SITE_TITLE = 'Viewflow Demo'
 
 # Mezzazine and cartride
 SITE_ID = 1
