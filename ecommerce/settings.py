@@ -152,6 +152,14 @@ TEMPLATE_CONTEXT_PROCESSORS += (
 )
 
 SHOP_CARD_TYPES = ('Demo', )
+SHOP_CURRENCY_LOCALE = 'en_US.utf8'
+
+
+#  Deploy settings
+try:
+    from deploy.settings import *
+except ImportError:
+    pass
 
 
 # Dynamic settings
@@ -161,3 +169,4 @@ except ImportError:
     pass
 else:
     set_dynamic_settings(globals())
+
