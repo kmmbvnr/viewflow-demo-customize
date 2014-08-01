@@ -154,6 +154,13 @@ TEMPLATE_CONTEXT_PROCESSORS += (
 SHOP_CARD_TYPES = ('Demo', )
 SHOP_CURRENCY_LOCALE = 'en_US.utf8'
 
+# Db backup
+INSTALLED_APPS += (
+    'dbbackup',
+)
+
+DBBACKUP_STORAGE = 'dbbackup.storage.filesystem_storage'
+DBBACKUP_FILESYSTEM_DIRECTORY = os.path.join(BASE_DIR, 'deploy/dbbackups')
 
 #  Deploy settings
 try:
