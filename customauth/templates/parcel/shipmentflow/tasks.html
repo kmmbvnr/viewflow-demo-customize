@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load viewflow %}
 
 {% block nav_tasks_cls %}active{% endblock %}
 
@@ -12,6 +13,8 @@
         <tr>
             <th>#</th>
             <th>Task</th>
+            <th>Status</th>
+            <th>Owner</th>
             <th>Planet</th>
             <th>Description</th>
         </tr>
@@ -20,7 +23,18 @@
         {% for task in tasks_page %}
         <tr>
             <td>{{ task.process.parcel.id }}</td>
-            <td>{{ task.flow_task }}</td>
+            <td>
+                {% with task.get_absolute_url as task_url %}
+                {% flow_perm user task as task_permitted %}
+                    {% if task_permitted and task_url %}
+                        <a href="{{ task_url }}">{{ task.flow_task }}</a>
+                    {% else %}
+                        {{ task.flow_task }}
+                    {% endif %}
+                {% endwith %}
+            </td>
+            <td>{{ task.get_status_display }}</td>
+            <td>{{ task.owner }}</td>
             <td>{{ task.process.parcel.planet }}</td>
             <td class="col-md-6">{{ process.parcel.description|linebreaks }}</td>
         </tr>

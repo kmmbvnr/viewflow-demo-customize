@@ -30,6 +30,9 @@ def register_shipment(request, activation):
 @login_required
 @flow_view()
 def approve_shipment(request, activation):
+    if not activation.has_perm(request.user):
+        raise PermissionDenied
+
     activation.prepare(request.POST or None)
     form = forms.ApproveForm(request.POST or None, instance=activation.process)
 
@@ -99,7 +102,7 @@ def details(request, process_pk):
 
 @login_required
 def task_list(request):
-    tasks = models.ShipmentTask.objects.user_queue(request.user)
+    tasks = models.ShipmentTask.objects.user_queue(request.user).order_by('-created')
     paginator = Paginator(tasks, 25)
 
     page = request.GET.get('page')
@@ -115,7 +118,7 @@ def task_list(request):
 
 @login_required
 def process_list(request):
-    processes = models.ShipmentProcess.objects.all()
+    processes = models.ShipmentProcess.objects.all().order_by('-created')
     paginator = Paginator(processes, 25)
 
     page = request.GET.get('page')

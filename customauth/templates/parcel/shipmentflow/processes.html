@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load viewflow %}
 
 {% block nav_parcels_cls%}active{% endblock %}
 
@@ -24,7 +25,17 @@
             <td class="col-md-6">{{ process.parcel.description|linebreaks }}</td>
             <td>
                 {% for task in process.active_tasks %}
-                <a href="{{ task.get_absolute_url }}">{{ task.flow_task }}</a>
+                {% with task.get_absolute_url as task_url %}
+                {% flow_perm user task as task_permitted %}
+                    {% if task_permitted and task_url %}
+                        <a href="{{ task_url }}">{{ task.flow_task }}</a>
+                    {% else %}
+                        {{ task.flow_task }}
+                    {% endif %}
+                {% endwith %}
+                {% if task.owner %}
+                ({{ task.owner }})
+                {% endif %}
                 {% endfor %}
             </td>
         </tr>
