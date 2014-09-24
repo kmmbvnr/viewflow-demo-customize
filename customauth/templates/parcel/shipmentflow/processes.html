@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block nav_parcels_cls%}active{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Parcels</h2>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Planet</th>
+            <th>Description</th>
+            <th>Tasks</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for process in process_page %}
+        <tr>
+            <td>{{ process.parcel.id }}</td>
+            <td>{{ process.parcel.planet }}</td>
+            <td class="col-md-6">{{ process.parcel.description|linebreaks }}</td>
+            <td>
+                {% for task in process.active_tasks %}
+                <a href="{{ task.get_absolute_url }}">{{ task.flow_task }}</a>
+                {% endfor %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4">No parcels yet</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
