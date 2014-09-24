@@ -1,17 +1,17 @@
 from django.views import generic
-from viewflow import flow
+from viewflow import views as flow_views
 
 from . import models
 
 
-class ShipmentView(flow.TaskFormViewMixin, generic.UpdateView):
+class ShipmentView(flow_views.TaskViewMixin, generic.UpdateView):
     fields = []
 
     def get_object(self):
         return self.activation.process.shipment
 
 
-class InsuranceView(flow.TaskFormViewMixin, generic.CreateView):
+class InsuranceView(flow_views.TaskViewMixin, generic.CreateView):
     model = models.Insurance
     fields = ['company_name', 'cost']
 

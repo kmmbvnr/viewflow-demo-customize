@@ -1,9 +1,9 @@
-django==1.6.5
+django==1.6.7
 cartridge
 south==0.8.4
 grappelli_safe
 filebrowser_safe
-git+ssh://git@github.com/kmmbvnr/django-viewflow-pro.git
+git+http://github.com/kmmbvnr/django-viewflow.git
 https://bitbucket.org/mjs7231/django-dbbackup/get/master.zip
 psycopg2
 uwsgi

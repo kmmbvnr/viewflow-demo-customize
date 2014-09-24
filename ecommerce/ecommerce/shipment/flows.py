@@ -1,6 +1,7 @@
 from viewflow import flow
 from viewflow.base import this, Flow
 from viewflow.views import ProcessView
+from viewflow.site import viewsite
 
 from . import tasks, models
 from . import views
@@ -68,3 +69,5 @@ class ShipmentFlow(Flow):
         .Next(this.end)
 
     end = flow.End()
+
+viewsite.register(ShipmentFlow)
