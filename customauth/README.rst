@@ -1,5 +1,11 @@
 Viewflow customization demo
 ===========================
 
-http://getbootstrap.com/examples/blog/
-https://docs.djangoproject.com/en/dev/topics/auth/customizing/#specifying-a-custom-user-model
+* Custom user model
+* django-guardian object level permission
+* No viewsite
+* Function based views for flow
+
+
+.. image:: doc/Parcel.png
+   :width: 400px
